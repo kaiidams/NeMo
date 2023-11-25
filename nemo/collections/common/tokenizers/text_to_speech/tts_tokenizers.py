@@ -916,3 +916,29 @@ class ChinesePhonemesTokenizer(BaseTokenizer):
             ps = [space] + ps + [space]
 
         return [self._token2id[p] for p in ps]
+
+
+class JapanesePhonemesTokenizer(BaseTokenizer):
+    # fmt: off
+    VOCAB = [
+        '-', '!', ',', '.', '?', 'N', 'a', 'a:', 'b', 'by',
+        'ch', 'd', 'e', 'e:', 'f', 'g', 'gy', 'h', 'hy', 'i',
+        'i:', 'j', 'k', 'ky', 'm', 'my', 'n', 'ny', 'o', 'o:',
+        'p', 'py', 'q', 'r', 'ry', 's', 'sh', 't', 'ts', 'u',
+        'u:', 'w', 'y', 'z'
+    ]
+    # fmt: on
+
+    def __init__(
+        self,
+        punct: bool,
+        apostrophe: bool,
+        pad_with_space: bool,
+    ):
+        super().__init__(
+            tokens=JapanesePhonemesTokenizer.VOCAB,
+        )
+        # self._id2token = tokens
+
+    def encode(self, text):
+        return [self._token2id[token] for token in text.split(' ')]
