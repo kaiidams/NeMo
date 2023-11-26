@@ -921,7 +921,7 @@ class ChinesePhonemesTokenizer(BaseTokenizer):
 class JapanesePhonemesTokenizer(BaseTokenizer):
     # fmt: off
     VOCAB = [
-        '-', '!', ',', '.', '?', 'N', 'a', 'a:', 'b', 'by',
+        '_', '!', ',', '.', '?', 'N', 'a', 'a:', 'b', 'by',
         'ch', 'd', 'e', 'e:', 'f', 'g', 'gy', 'h', 'hy', 'i',
         'i:', 'j', 'k', 'ky', 'm', 'my', 'n', 'ny', 'o', 'o:',
         'p', 'py', 'q', 'r', 'ry', 's', 'sh', 't', 'ts', 'u',
