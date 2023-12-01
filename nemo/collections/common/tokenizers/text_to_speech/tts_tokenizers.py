@@ -936,12 +936,13 @@ class JapanesePhonemesTokenizer(BaseTokenizer):
         pad_with_space: bool,
     ):
         super().__init__(
+            sep=' ',
             tokens=JapanesePhonemesTokenizer.VOCAB,
         )
         # self._id2token = tokens
 
     def encode(self, text):
-        return [self._token2id[token] for token in text.split(' ')]
+        return [self._token2id[token] for token in text.split(self.sep)]
 
 
 class JapaneseNormalizer:
