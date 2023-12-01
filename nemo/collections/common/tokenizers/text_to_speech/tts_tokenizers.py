@@ -942,3 +942,21 @@ class JapanesePhonemesTokenizer(BaseTokenizer):
 
     def encode(self, text):
         return [self._token2id[token] for token in text.split(' ')]
+
+
+class JapaneseNormalizer:
+    def __init__(
+        self,
+        input_case: str,
+        lang: str = 'en',
+    ):
+        assert input_case in ["lower_cased", "cased"]
+        if lang == 'ja':
+            pass
+        else:
+            raise NotImplementedError(f"Language {lang} has not been supported yet.")
+
+    def normalize(
+        self, text: str, verbose: bool = False, punct_pre_process: bool = False, punct_post_process: bool = False
+    ) -> str:
+        return text

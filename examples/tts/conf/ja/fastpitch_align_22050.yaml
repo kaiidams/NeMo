@@ -1,5 +1,5 @@
-# This config contains the default values for training FastPitch model with aligner using 22KHz sampling
-# rate. If you want to train model on other dataset, you can change config values according to your dataset.
+# This config contains the default values for training FastPitch model with aligner using 22KHz sampling 
+# rate. If you want to train model on other dataset, you can change config values according to your dataset. 
 # Most dataset-specific arguments are in the head of the config file, see below.
 
 name: FastPitch
@@ -11,12 +11,12 @@ sup_data_types: [ "align_prior_matrix", "pitch" ]
 
 # Default values from librosa.pyin
 pitch_fmin: 65.40639132514966
-pitch_fmax: 1986.977294921875
+pitch_fmax: 2093.004522404789
 
 # these frame-wise values depend on pitch_fmin and pitch_fmax, you can get values
 # by running `scripts/dataset_processing/tts/extract_sup_data.py`
-pitch_mean: ???  # e.g. 221.4948272705078 for SFbilingual dataset.
-pitch_std:  ???  # e.g.  64.6528930664063 for SFbilingual dataset.
+pitch_mean: ???  # e.g. 131.2835693359375 for Kokoro-Speech dataset.
+pitch_std: ???   # e.g.  27.747711181640625 for Kokoro-Speech dataset.
 
 # Default values for dataset with sample_rate=22050
 sample_rate: 22050
@@ -27,14 +27,6 @@ n_fft: 1024
 lowfreq: 0
 highfreq: null
 window: hann
-
-# There are four candidates of `phoneme_dict_path` provided for Chinese as shown below,
-#     1) 24-final Pinyin: "scripts/tts_dataset_files/zh/24finals/pinyin_dict_nv_22.10.txt",
-#     2) IPA converted from 24-final Pinyin: "scripts/tts_dataset_files/zh/24finals/ipa_dict_nv23.05.txt",
-#     3) 36-final Pinyin: "scripts/tts_dataset_files/zh/36finals/pinyin_dict_nv23.05.txt",
-#     4) (default) IPA converted from 36-final Pinyin: "scripts/tts_dataset_files/zh/36finals/ipa_dict_nv23.05.txt"
-# Suggest to choose IPA symbol set converted from 36-final Pinyin because better audio quality were observed.
-phoneme_dict_path: "scripts/tts_dataset_files/zh/36finals/ipa_dict_nv23.05.txt"
 
 model:
   learn_alignment: true
@@ -61,8 +53,9 @@ model:
   window: ${window}
 
   text_normalizer:
-    _target_: nemo_text_processing.text_normalization.normalize.Normalizer
-    lang: zh
+#    _target_: nemo_text_processing.text_normalization.normalize.Normalizer
+    _target_: nemo.collections.common.tokenizers.text_to_speech.tts_tokenizers.JapaneseNormalizer
+    lang: ja
     input_case: cased
 
   text_normalizer_call_kwargs:
@@ -71,19 +64,10 @@ model:
     punct_post_process: true
 
   text_tokenizer:
-    _target_: nemo.collections.common.tokenizers.text_to_speech.tts_tokenizers.ChinesePhonemesTokenizer
+    _target_: nemo.collections.common.tokenizers.text_to_speech.tts_tokenizers.JapanesePhonemesTokenizer
     punct: true
     apostrophe: true
     pad_with_space: true
-    g2p:
-      _target_: nemo.collections.tts.g2p.models.zh_cn_pinyin.ChineseG2p
-      phoneme_dict: ${phoneme_dict_path}
-      word_segmenter: jieba # Only jieba is supported now.
-      phoneme_prefix: ""
-      phoneme_case: lower
-      tone_prefix: "#"
-      ascii_letter_prefix: ""
-      ascii_letter_case: upper
 
   train_ds:
     dataset:
@@ -99,7 +83,7 @@ model:
       n_mels: ${model.n_mel_channels}
       lowfreq: ${model.lowfreq}
       highfreq: ${model.highfreq}
-      max_duration: null # change to null to include longer audios.
+      max_duration: 15  # change to null to include longer audios.
       min_duration: 0.1
       ignore_file: null
       trim: true
@@ -133,7 +117,7 @@ model:
       n_mels: ${model.n_mel_channels}
       lowfreq: ${model.lowfreq}
       highfreq: ${model.highfreq}
-      max_duration: null # change to null to include longer audios.
+      max_duration: 15  # change to null to include longer audios.
       min_duration: 0.1
       ignore_file: null
       trim: true
@@ -150,7 +134,7 @@ model:
       drop_last: false
       shuffle: false
       batch_size: 32
-      num_workers: 2
+      num_workers: 8
       pin_memory: true
 
   preprocessor:
@@ -224,7 +208,7 @@ model:
   optim:
     name: adamw
     lr: 1e-3
-    betas: [0.9, 0.999]
+    betas: [ 0.9, 0.999 ]
     weight_decay: 1e-6
 
     sched:
@@ -235,15 +219,16 @@ model:
 
 trainer:
   num_nodes: 1
-  devices: 4 # number of gpus
+  #devices: -1  # specify all GPUs regardless of its availability
+  #devices: 1  # number of cpus
   accelerator: cpu
   strategy: ddp
   precision: 16
-  max_epochs: 5000
+  max_epochs: 1500
   accumulate_grad_batches: 1
   gradient_clip_val: 1000.0
-  enable_checkpointing: false # Provided by exp_manager
-  logger: false # Provided by exp_manager
+  enable_checkpointing: false  # Provided by exp_manager
+  logger: false  # Provided by exp_manager
   log_every_n_steps: 100
   check_val_every_n_epoch: 5
   benchmark: false

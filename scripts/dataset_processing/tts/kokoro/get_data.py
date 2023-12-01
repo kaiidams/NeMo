@@ -9,9 +9,12 @@ data_path = './data/kokoro-speech-v1_3-large'
 # output_path = os.path.abspath('./kokoro-speech')
 output_path = './kokoro-speech'
 
+# os.makedirs(os.path.join(output_path, 'wavs'), exist_ok=True)
+
 with open(os.path.join(data_path, 'metadata.csv')) as fp:
     lines = fp.readlines()
-#lines = lines[:100]
+# lines = lines[:100]
+
 
 def trim_audio(infile, outfile, sr=22050, notrim=False):
     x, sr = librosa.load(infile, sr=sr, mono=True)
@@ -25,7 +28,6 @@ def trim_audio(infile, outfile, sr=22050, notrim=False):
     sf.write(outfile, y, samplerate=sr)
     return y.shape[0] / sr
 
-#os.makedirs(os.path.join(output_path, 'wavs'), exist_ok=True)
 
 data = []
 for line in tqdm(lines):
@@ -48,11 +50,13 @@ x = np.arange(len(data))
 np.random.seed(1234)
 np.random.shuffle(x)
 
+
 def write_manifest(split, indices):
     with open(os.path.join(output_path, f"{split}_manifest.json"), 'wt') as f_out:
         for idx in indices:
             entry = data[idx]
             f_out.write(json.dumps(entry, ensure_ascii=False) + '\n')
+
 
 write_manifest('train', x[600:])
 write_manifest('val', x[500:600])
