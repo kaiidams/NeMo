@@ -53,7 +53,6 @@ model:
   window: ${window}
 
   text_normalizer:
-#    _target_: nemo_text_processing.text_normalization.normalize.Normalizer
     _target_: nemo.collections.common.tokenizers.text_to_speech.tts_tokenizers.JapaneseNormalizer
     lang: ja
     input_case: cased
